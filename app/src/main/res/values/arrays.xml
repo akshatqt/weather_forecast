@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="temperature_units">
+        <item>Celsius (°C)</item>
+        <item>Fahrenheit (°F)</item>
+    </string-array>
+
+    <string-array name="wind_units">
+        <item>Kilometers per hour (km/h)</item>
+        <item>Miles per hour (mph)</item>
+        <item>Meters per second (m/s)</item>
+    </string-array>
+
+    <string-array name="air_pressure_units">
+        <item>Hectopascals (hPa)</item>
+        <item>Inches of Mercury (inHg)</item>
+        <item>Millimeters of Mercury (mmHg)</item>
+    </string-array>
+
+    <string-array name="visibility_units">
+        <item>Kilometers (km)</item>
+        <item>Miles (mi)</item>
+        <item>Meters (m)</item>
+    </string-array>
+
+    <string-array name="theme_modes">
+        <item>System Default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="background_types">
+        <item>Static</item>
+        <item>Animated</item>
+    </string-array>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_gradient_start">#3A1941</color>
+    <color name="purple_gradient_end">#240F47</color>
+    <color name="card_background">#240F47</color>
+    <color name="item_background">#3F1F76</color>
+    <color name="switch_track_inactive">#808080</color>
+</resources>
