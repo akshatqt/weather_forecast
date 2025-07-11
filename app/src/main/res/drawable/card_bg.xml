@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Solid dark purple shade (match your Figma design) -->
+    <solid android:color="#26053E" /> <!-- adjust if needed -->
+
+    <corners android:radius="16dp" />
+
+</shape>
