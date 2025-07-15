@@ -20,7 +20,7 @@
         android:id="@+id/icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/ic_sun_rain"
+        android:src="@drawable/ic_weather_icon"
         android:layout_marginHorizontal="16dp"
         android:contentDescription="Weather Icon" />
 

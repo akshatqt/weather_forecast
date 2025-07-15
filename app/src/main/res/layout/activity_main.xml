@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:orientation="horizontal"
-        android:background="@drawable/bg_card_dark"
+        android:background="@drawable/bg_card_20"
         android:padding="10dp"
         android:gravity="center_vertical">
 
@@ -78,8 +78,8 @@
         android:layout_below="@id/inputLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:background="@drawable/bg_card_dark"
-        android:src="@drawable/baseline_arrow_forward_24"
+        android:background="@drawable/bg_card_20"
+        android:src="@drawable/ic_arrow_forward"
         app:tint="@android:color/white"
         android:contentDescription="Next" />
 </RelativeLayout>
