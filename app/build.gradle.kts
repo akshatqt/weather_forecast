@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,12 +10,21 @@ android {
     namespace = "com.sudh.weatherforecast"
     compileSdk = 35
 
+    val localProperties = Properties().apply {
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            load(localFile.inputStream())
+        }
+    }
+    val openWeatherApiKey = localProperties["OPENWEATHER_API_KEY"] as String
+
     defaultConfig {
         applicationId = "com.sudh.weatherforecast"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "OPENWEATHER_API_KEY", "\"$openWeatherApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

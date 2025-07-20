@@ -11,7 +11,6 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.sudh.weatherforecast.R
 
 class SettingsActivity : AppCompatActivity() {
 
