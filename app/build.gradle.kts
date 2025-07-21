@@ -7,6 +7,10 @@ plugins {
 }
 
 android {
+    buildFeatures {
+        buildConfig = true
+        }
+
     namespace = "com.sudh.weatherforecast"
     compileSdk = 35
 

@@ -1,7 +1,5 @@
 package com.sudh.weatherforecast
 
-import com.sudh.weatherforecast.Weather
-
 data class ForecastResponse(
     val city: City,
     val list: List<ForecastDay>

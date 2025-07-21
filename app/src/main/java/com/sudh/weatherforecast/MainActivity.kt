@@ -16,9 +16,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)   // XML file you pasted
+        setContentView(R.layout.activity_main)
 
-        // made variable
         cityInput  = findViewById(R.id.cityInput)
         nextButton = findViewById(R.id.nextButton)
 
@@ -35,7 +34,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // arrow button
         nextButton.setOnClickListener { goToNextPage() }
     }
 

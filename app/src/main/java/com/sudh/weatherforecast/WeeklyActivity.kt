@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class WeeklyActivity : AppCompatActivity() {
 
-    private val apiKey = "YOUR_API_KEY_HERE" // store securely in real apps
+    private val apiKey = BuildConfig.OPENWEATHER_API_KEY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
