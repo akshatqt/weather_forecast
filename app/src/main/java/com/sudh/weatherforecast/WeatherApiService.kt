@@ -33,7 +33,7 @@ interface WeatherApiService {
     @GET("geo/1.0/direct")
     suspend fun getCoordinatesByCity(
         @Query("q") cityName: String,
-        @Query("limit") limit: Int = 1,
+        @Query("limit") limit: Int = 5,
         @Query("appid") apiKey: String
     ): List<GeoCodingResponseItem>
 
