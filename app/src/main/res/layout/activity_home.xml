@@ -34,38 +34,46 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                <ImageButton
+                    android:id="@+id/backButton"
+                    android:layout_width="28dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Back"
+                    android:padding="8dp"
                     android:src="@drawable/ic_arrow_back"
-                    android:layout_marginTop="6dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:tint="@android:color/white" />
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="6dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="20dp"
                     android:src="@drawable/ic_location"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.406"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginLeft="4dp"/>
 
                 <TextView
                     android:id="@+id/city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="6dp"
                     android:text="Delhi"
                     android:textColor="@android:color/white"
-                    android:textSize="28sp"
+                    android:textSize="22sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.531"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -189,9 +197,10 @@
                         android:layout_marginTop="4dp" />
 
                     <TextView
+                        android:id="@+id/humidity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="54%"
+                        android:text="__%"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textSize="14sp"
@@ -221,9 +230,10 @@
                         android:layout_marginTop="4dp" />
 
                     <TextView
+                        android:id="@+id/windspeed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10 km/h"
+                        android:text="__ km/h"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textSize="14sp"
@@ -255,7 +265,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="32"
+                        android:text="__"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
                         android:textSize="14sp"
