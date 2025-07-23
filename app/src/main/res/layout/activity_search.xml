@@ -13,7 +13,7 @@
     android:orientation="vertical">
 
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/searchText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,9 +28,9 @@
         android:layout_marginEnd="10dp"
         android:drawablePadding="10dp"
         android:drawableEnd="@drawable/ic_cross"
+        android:inputType="text"
+        android:imeOptions="actionSearch" />
 
-
-        />
     <TextView
         android:id="@+id/recentsLabel"
         android:layout_width="wrap_content"
@@ -48,16 +48,12 @@
         />
 
 
-    <com.google.android.flexbox.FlexboxLayout
+    <LinearLayout
         android:id="@+id/recentSearchContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginTop="12dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:padding="12dp"
-        app:flexWrap="wrap"
-        app:justifyContent="flex_start"
-        app:alignItems="flex_start" />
+        android:padding="12dp"/>
 
 </LinearLayout>

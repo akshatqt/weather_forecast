@@ -35,8 +35,7 @@ class MainActivity : AppCompatActivity() {
         cityInput = findViewById(R.id.cityInput)
         nextButton = findViewById(R.id.nextButton)
 
-        cityInput.threshold = 1 // show suggestions after 1 char
-
+        cityInput.threshold = 1 //show suggestions after 1 char (dheela hai?)
         cityInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString().trim()
@@ -44,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    delay(300) // debounce
+                    delay(300) //ensuring it doesn't get presses too often
 
                     try {
                         val api = RetrofitGeoClient.geoApi
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     } catch (e: Exception) {
-                        Log.e("MainActivity", "City fetch failed: ${e.message}", e)
+                        //for whtv reason if fetching fails
                         withContext(Dispatchers.Main) {
                             Toast.makeText(this@MainActivity, "Error fetching suggestions", Toast.LENGTH_SHORT).show()
                         }
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         cityInput.setOnEditorActionListener { _, actionId, event ->
+            //handles both keyboard enter and and the on-screen enter
             val isDone = actionId == EditorInfo.IME_ACTION_DONE
             val isEnter = event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
             if (isDone || isEnter) {
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Optionally validate that input is from suggestion
+        //make the user select a city from dropdown
         if (!latestCityList.contains(input)) {
             Toast.makeText(this, "Please select a valid city from dropdown", Toast.LENGTH_SHORT).show()
             return

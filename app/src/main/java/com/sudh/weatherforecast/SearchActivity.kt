@@ -1,24 +1,29 @@
 package com.sudh.weatherforecast
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.google.android.flexbox.FlexboxLayout
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
+import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var searchText: EditText
-    private lateinit var recentContainer: FlexboxLayout
-    private val recentSearches = mutableListOf<String>()
+    private lateinit var searchText: AutoCompleteTextView
+    private lateinit var recentContainer: LinearLayout
+    private var recentList = ArrayList<String>()
+    private var latestCityList = listOf<String>()
+    private var searchJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,17 +32,62 @@ class SearchActivity : AppCompatActivity() {
         searchText = findViewById(R.id.searchText)
         recentContainer = findViewById(R.id.recentSearchContainer)
 
+        searchText.threshold = 1
+
+        searchText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString().trim()
+                if (query.length < 2) return
+
+                searchJob?.cancel()
+                searchJob = lifecycleScope.launch {
+                    delay(300) // debounce
+                    try {
+                        val api = RetrofitGeoClient.geoApi
+                        val results = api.getCoordinatesByCity(query, 5, BuildConfig.OPENWEATHER_API_KEY)
+
+                        latestCityList = results.map {
+                            if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            val adapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, latestCityList)
+                            searchText.setAdapter(adapter)
+                            searchText.showDropDown()
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("SearchActivity", "City fetch failed: ${e.message}", e)
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@SearchActivity, "Error fetching suggestions", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        searchText.setOnEditorActionListener { _, actionId, event ->
+            val isDone = actionId == EditorInfo.IME_ACTION_DONE
+            val isEnter = event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+            if (isDone || isEnter) {
+                handleCitySelection()
+                true
+            } else false
+        }
 
         searchText.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableEnd = searchText.compoundDrawables[2]
-                drawableEnd?.let {
-                    val drawableWidth = it.bounds.width()
-                    val touchX = event.rawX
-                    val touchStart = searchText.right - searchText.paddingEnd - drawableWidth
-
-                    if (touchX >= touchStart) {
-                        searchText.text.clear()
+                if (drawableEnd != null) {
+                    val width = drawableEnd.bounds.width()
+                    val rightEdge = searchText.right
+                    val padding = searchText.paddingEnd
+                    val clickX = event.rawX
+                    if (clickX >= (rightEdge - width - padding)) {
+                        searchText.setText("")
                         return@setOnTouchListener true
                     }
                 }
@@ -45,72 +95,77 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        // Handle Enter/Search key
-        searchText.setOnEditorActionListener { _, actionId, event ->
-            val input = searchText.text.toString().trim()
-            if (actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_SEARCH ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+        updateRecentUI(recentContainer, recentList, searchText)
+    }
 
-                if (input.isNotEmpty()) {
-                    addToRecent(input)
-                    searchText.text.clear()
-                    hideKeyboard()
-                } else {
-                    Toast.makeText(this, "Please enter a city", Toast.LENGTH_SHORT).show()
-                }
-                true
-            } else {
-                false
+    private fun handleCitySelection() {
+        val input = searchText.text.toString().trim()
+
+        if (input.isEmpty()) {
+            Toast.makeText(this, "Please enter a city name", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!latestCityList.contains(input)) {
+            Toast.makeText(this, "Please select a valid city from dropdown", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val cleanCity = input.replaceFirstChar { it.uppercaseChar() }
+
+        if (recentList.contains(cleanCity)) {
+            recentList.remove(cleanCity)
+        }
+        recentList.add(0, cleanCity)
+        if (recentList.size > 5) recentList.removeAt(recentList.size - 1)
+
+        hideKeyboard(searchText)
+        searchText.setText("")
+        updateRecentUI(recentContainer, recentList, searchText)
+
+        getSharedPreferences("weather_prefs", MODE_PRIVATE).edit()
+            .putString("city_name", cleanCity)
+            .apply()
+
+        startHome(cleanCity)
+    }
+
+    private fun startHome(cityName: String) {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra("city_name", cityName)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun updateRecentUI(container: LinearLayout, recentList: ArrayList<String>, searchText: EditText) {
+        container.removeAllViews()
+
+        for (item in recentList) {
+            val tag = TextView(this)
+            tag.text = item
+            tag.setTextColor(Color.WHITE)
+            tag.setPadding(30, 20, 30, 20)
+            tag.textSize = 16f
+            tag.setBackgroundColor(Color.parseColor("#33FFFFFF"))
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(10, 10, 10, 10)
+            tag.layoutParams = params
+
+            tag.setOnClickListener {
+                searchText.setText(item)
+                searchText.setSelection(item.length)
             }
-        }
 
-        // Load empty recent tags initially
-        updateRecentTags()
-    }
-
-    private fun addToRecent(city: String) {
-        val formattedCity = city.trim().replaceFirstChar { it.uppercaseChar() }
-
-        // Remove if already exists, then re-add to top
-        recentSearches.remove(formattedCity)
-        recentSearches.add(0, formattedCity)
-
-        // Keep only latest 5 tags
-        if (recentSearches.size > 5) {
-            recentSearches.removeAt(recentSearches.size - 1)
-        }
-
-        updateRecentTags()
-    }
-
-    private fun updateRecentTags() {
-        recentContainer.removeAllViews()
-
-        for (city in recentSearches) {
-            val tag = TextView(this).apply {
-                text = city
-                setTextColor(Color.WHITE)
-                setPadding(40, 20, 40, 20)
-                background = ContextCompat.getDrawable(context, R.drawable.bg_card_50)
-                layoutParams = FlexboxLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    setMargins(20, 10, 20, 10)
-                }
-
-                setOnClickListener {
-                    searchText.setText(city)
-                    searchText.setSelection(city.length)
-                }
-            }
-            recentContainer.addView(tag)
+            container.addView(tag)
         }
     }
 
-    private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(searchText.windowToken, 0)
+    private fun hideKeyboard(editText: EditText) {
+        val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 }

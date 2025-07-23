@@ -1,6 +1,5 @@
 package com.sudh.weatherforecast
 
-import com.sudh.weatherforecast.SwipeGestureListener
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -41,8 +40,6 @@ class HomeActivity : AppCompatActivity() {
         val cityTextView = findViewById<TextView>(R.id.city)
         cityTextView.text = cityName ?: "Delhi"
 
-        // Gesture setup
-        gestureDetector = GestureDetector(this, SwipeGestureListener(this))
 
         // Retrofit setup
         val retrofit=Retrofit.Builder()
