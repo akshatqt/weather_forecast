@@ -34,47 +34,35 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <ImageButton
-                    android:id="@+id/backButton"
-                    android:layout_width="28dp"
-                    android:layout_height="22dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Back"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_arrow_back"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@android:color/white" />
+
 
                 <ImageView
+
+                    android:id="@+id/location"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="25dp"
                     android:src="@drawable/ic_location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.406"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginLeft="4dp"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/city"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    />
 
                 <TextView
                     android:id="@+id/city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="25dp"
                     android:text="Delhi"
                     android:textColor="@android:color/white"
                     android:textSize="22sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.531"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/location"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-                    />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Weather Condition -->
@@ -127,6 +115,7 @@
                     android:layout_marginStart="150dp"/>
 
                 <TextView
+                    android:id="@+id/descriptiontxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sun Showers"
@@ -138,29 +127,28 @@
                     android:layout_marginStart="42dp"/>
 
                 <TextView
-                    android:id="@+id/mintemp"
+                    android:id="@+id/feels_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Min - 14°"
+                    android:text="Feels Like:"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    tools:layout_editor_absoluteX="133dp"
-                    tools:layout_editor_absoluteY="32dp"
                     app:layout_constraintTop_toBottomOf="@id/temperature"
                     app:layout_constraintStart_toEndOf="@id/topicon"
-                    android:layout_marginStart="75dp"/>
+                    android:layout_marginStart="75dp" />
+
                 <TextView
+                    android:id="@+id/feels_like_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Max - 14°"
+                    android:text="14°"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    tools:layout_editor_absoluteX="133dp"
-                    tools:layout_editor_absoluteY="32dp"
-                    app:layout_constraintTop_toBottomOf="@id/mintemp"
-                    app:layout_constraintStart_toEndOf="@id/topicon"
-                    android:layout_marginStart="74dp"
-                    />
+                    app:layout_constraintStart_toEndOf="@id/feels_like"
+                    app:layout_constraintBaseline_toBaselineOf="@id/feels_like"
+                    android:layout_marginStart="10dp" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
