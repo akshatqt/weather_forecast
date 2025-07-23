@@ -114,9 +114,9 @@ class HomeActivity : AppCompatActivity() {
         val date=SimpleDateFormat("dd , MMMM",Locale.getDefault()).format(Date())
         dateTextView.text=date
         //navigation buttons
-        val home_btn=findViewById<ImageButton>(R.id.navHome)
-        home_btn.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
+        val week_btn=findViewById<ImageButton>(R.id.navHome)
+        week_btn.setOnClickListener {
+            val intent = Intent(this, WeeklyActivity::class.java)
             startActivity(intent)
 
         }
