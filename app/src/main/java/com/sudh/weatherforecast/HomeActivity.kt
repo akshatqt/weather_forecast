@@ -19,6 +19,10 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -68,7 +72,7 @@ class HomeActivity : AppCompatActivity() {
 
                     Log.d("DEBUG", "Weather response: $weather")
 
-                    Toast.makeText(this@HomeActivity, "Temp: ${weather.main.temp}", Toast.LENGTH_SHORT).show()
+
 
                     // Set values to UI
                     val tempTextView = findViewById<TextView>(R.id.temperature)
@@ -80,6 +84,23 @@ class HomeActivity : AppCompatActivity() {
                     val windspeed = findViewById<TextView>(R.id.windspeed)
                     windspeed.text = "${weather.wind.speed}km/h"
 
+                    val feels_like=findViewById<TextView>(R.id.feels_like_value)
+                    feels_like.text="${weather.main.feels_like}°C"
+
+                    //weather description
+                    val description=findViewById<TextView>(R.id.descriptiontxt)
+                    description.text="${weather.weather[0].description}"//make first letter capital
+                    //icons
+                    val iconCode = weather.weather[0].icon
+                    val iconUrl = "https://openweathermap.org/img/wn/${iconCode}@2x.png"
+                    val icon=findViewById<ImageView>(R.id.topicon)
+
+                    Glide.with(this@HomeActivity)
+                        .load(iconUrl)
+                        .into(icon)
+
+
+
                 } else {
                     Log.e("DEBUG", "geoList is empty")
                     Toast.makeText(this@HomeActivity, "City not found", Toast.LENGTH_SHORT).show()
@@ -87,10 +108,15 @@ class HomeActivity : AppCompatActivity() {
 
             } catch (e: Exception) {
                 Log.e("DEBUG", "API error: ${e.message}")
-                Toast.makeText(this@HomeActivity, "API failed: ${e.message}", Toast.LENGTH_LONG).show()
+
             }
 
         }
+        //current date
+        val dateTextView=findViewById<TextView>(R.id.datetxt)
+        val date=SimpleDateFormat("dd , MMMM",Locale.getDefault()).format(Date())
+        dateTextView.text=date
+        //navigation buttons
         val home_btn=findViewById<ImageButton>(R.id.navHome)
         home_btn.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
@@ -109,6 +135,8 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
+
+
 
 
     }
