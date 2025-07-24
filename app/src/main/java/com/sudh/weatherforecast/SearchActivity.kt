@@ -24,6 +24,7 @@ class SearchActivity : AppCompatActivity() {
     private var recentList = ArrayList<String>()
     private var latestCityList = listOf<String>()
     private var searchJob: Job? = null
+    private var userSelectedFromDropdown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +35,18 @@ class SearchActivity : AppCompatActivity() {
 
         searchText.threshold = 1
 
+        searchText.setOnItemClickListener { _, _, _, _ ->
+            userSelectedFromDropdown = true
+            searchText.dismissDropDown()
+        }
+
         searchText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString().trim()
                 if (query.length < 2) return
+
+                // User is typing, reset selection state
+                userSelectedFromDropdown = false
 
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
@@ -51,9 +60,11 @@ class SearchActivity : AppCompatActivity() {
                         }
 
                         withContext(Dispatchers.Main) {
-                            val adapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, latestCityList)
-                            searchText.setAdapter(adapter)
-                            searchText.showDropDown()
+                            if (!userSelectedFromDropdown) {
+                                val adapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, latestCityList)
+                                searchText.setAdapter(adapter)
+                                searchText.showDropDown()
+                            }
                         }
 
                     } catch (e: Exception) {
@@ -68,6 +79,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
 
         searchText.setOnEditorActionListener { _, actionId, event ->
             val isDone = actionId == EditorInfo.IME_ACTION_DONE
@@ -96,6 +108,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
         updateRecentUI(recentContainer, recentList, searchText)
+
+        val backArrow = findViewById<ImageView>(R.id.backButton)
+        backArrow.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
     }
 
     private fun handleCitySelection() {
