@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
+import retrofit2.Response
 import java.util.*
 
 class SearchActivity : AppCompatActivity() {
@@ -44,22 +45,45 @@ class SearchActivity : AppCompatActivity() {
                     delay(300) // debounce
                     try {
                         val api = RetrofitGeoClient.geoApi
-                        val results = api.getCoordinatesByCity(query, 5, BuildConfig.OPENWEATHER_API_KEY)
+                        val response: Response<List<GeocodingResponseItem>> = api.getCoordinatesByCity(
+                            query,
+                            5,
+                            BuildConfig.OPENWEATHER_API_KEY
+                        )
 
-                        latestCityList = results.map {
-                            if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
-                        }
+                        if (response.isSuccessful && response.body() != null) {
+                            val results = response.body()!!
+                            latestCityList = results.map {
+                                if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
+                            }
 
-                        withContext(Dispatchers.Main) {
-                            val adapter = ArrayAdapter(this@SearchActivity, android.R.layout.simple_dropdown_item_1line, latestCityList)
-                            searchText.setAdapter(adapter)
-                            searchText.showDropDown()
+                            withContext(Dispatchers.Main) {
+                                val adapter = ArrayAdapter(
+                                    this@SearchActivity,
+                                    android.R.layout.simple_dropdown_item_1line,
+                                    latestCityList
+                                )
+                                searchText.setAdapter(adapter)
+                                searchText.showDropDown()
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    this@SearchActivity,
+                                    "No matching cities found.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
 
                     } catch (e: Exception) {
                         Log.e("SearchActivity", "City fetch failed: ${e.message}", e)
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@SearchActivity, "Error fetching suggestions", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@SearchActivity,
+                                "Error fetching suggestions",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
