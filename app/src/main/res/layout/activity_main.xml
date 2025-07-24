@@ -1,19 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
     tools:context=".MainActivity">
 
+    <!-- Welcome Text -->
     <TextView
+        android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Welcome!"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Subtext -->
+    <TextView
+        android:id="@+id/descText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get started by\nchoosing your city:"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/welcomeText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <!-- Input Field with Search Icon -->
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/descText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_card_20"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:gravity="center_vertical">
+
+        <AutoCompleteTextView
+            android:id="@+id/cityInput"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:hint="Enter city name..."
+            android:textColorHint="@android:color/white"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:paddingHorizontal="8dp"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="@android:color/white"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Arrow Button -->
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/inputLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_card_20"
+        android:src="@drawable/ic_arrow_forward"
+        app:tint="@android:color/white"
+        android:contentDescription="Next" />
+</RelativeLayout>

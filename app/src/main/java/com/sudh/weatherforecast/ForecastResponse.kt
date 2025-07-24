@@ -1,7 +1,5 @@
 package com.sudh.weatherforecast
 
-import com.sudh.weatherforecast.Weather
-
 data class ForecastResponse(
     val city: City,
     val list: List<ForecastDay>
@@ -47,4 +45,10 @@ data class FeelsLike(
     val night: Double,
     val eve: Double,
     val morn: Double
+)
+data class GeocodingResponseItem(
+    val name: String,
+    val lat: Double,
+    val lon: Double,
+    val country: String,
 )
