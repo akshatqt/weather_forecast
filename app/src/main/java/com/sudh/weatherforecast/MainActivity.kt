@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private var searchJob: Job? = null
     private var latestCityList: List<String> = emptyList()
 
+    private var userSelectedFromDropdown = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -101,6 +103,54 @@ class MainActivity : AppCompatActivity() {
                 true
             } else false
         }
+
+        // Handle item selection from dropdown
+        cityInput.setOnItemClickListener { _, _, position, _ ->
+            userSelectedFromDropdown = true
+            cityInput.dismissDropDown()
+        }
+
+        // Show suggestions while typing, only if not selected from dropdown
+        cityInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString().trim()
+                if (query.length < 2) return
+
+                // Reset selection flag because user is typing
+                userSelectedFromDropdown = false
+
+                searchJob?.cancel()
+                searchJob = lifecycleScope.launch {
+                    delay(300)
+
+                    try {
+                        val api = RetrofitGeoClient.geoApi
+                        val results = api.getCoordinatesByCity(query, 5, BuildConfig.OPENWEATHER_API_KEY)
+
+                        latestCityList = results.map {
+                            if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            if (!userSelectedFromDropdown) { // Show dropdown only if user is typing
+                                val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_dropdown_item_1line, latestCityList)
+                                cityInput.setAdapter(adapter)
+                                cityInput.showDropDown()
+                            }
+                        }
+
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@MainActivity, "Error fetching suggestions", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
 
         nextButton.setOnClickListener { handleCitySelection() }
     }

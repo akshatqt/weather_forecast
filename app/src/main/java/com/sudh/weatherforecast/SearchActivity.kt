@@ -15,7 +15,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
-import retrofit2.Response
 import java.util.*
 
 class SearchActivity : AppCompatActivity() {
@@ -25,6 +24,7 @@ class SearchActivity : AppCompatActivity() {
     private var recentList = ArrayList<String>()
     private var latestCityList = listOf<String>()
     private var searchJob: Job? = null
+    private var userSelectedFromDropdown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,29 +35,30 @@ class SearchActivity : AppCompatActivity() {
 
         searchText.threshold = 1
 
+        searchText.setOnItemClickListener { _, _, _, _ ->
+            userSelectedFromDropdown = true
+            searchText.dismissDropDown()
+        }
+
         searchText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString().trim()
                 if (query.length < 2) return
 
+                userSelectedFromDropdown = false
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
                     delay(300) // debounce
                     try {
                         val api = RetrofitGeoClient.geoApi
-                        val response: Response<List<GeocodingResponseItem>> = api.getCoordinatesByCity(
-                            query,
-                            5,
-                            BuildConfig.OPENWEATHER_API_KEY
-                        )
+                        val results = api.getCoordinatesByCity(query, 5, BuildConfig.OPENWEATHER_API_KEY)
 
-                        if (response.isSuccessful && response.body() != null) {
-                            val results = response.body()!!
-                            latestCityList = results.map {
-                                if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
-                            }
+                        latestCityList = results.map {
+                            if (it.country.isNotEmpty()) "${it.name}, ${it.country}" else it.name
+                        }
 
-                            withContext(Dispatchers.Main) {
+                        withContext(Dispatchers.Main) {
+                            if (!userSelectedFromDropdown) {
                                 val adapter = ArrayAdapter(
                                     this@SearchActivity,
                                     android.R.layout.simple_dropdown_item_1line,
@@ -65,14 +66,6 @@ class SearchActivity : AppCompatActivity() {
                                 )
                                 searchText.setAdapter(adapter)
                                 searchText.showDropDown()
-                            }
-                        } else {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    this@SearchActivity,
-                                    "No matching cities found.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         }
 
@@ -120,6 +113,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         updateRecentUI(recentContainer, recentList, searchText)
+
+        val backArrow = findViewById<ImageView>(R.id.backButton)
+        backArrow.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun handleCitySelection() {
